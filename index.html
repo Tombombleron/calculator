@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+<!--        <meta name="viewport" content="width=device-width,initial-scale=1">-->
+        <style>
+            * { box-sizing: border-box; }
+            body { 
+                margin: 0;
+                background-color: #619B8A;
+            }
+            html { font-family: Lucida Sans, sans-serif; }
+            ::-webkit-scrollbar { display: none; }
+            .container {
+                min-height: 100vh;
+                min-width: 100vw;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .calculator {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                max-width: 90%;
+                min-height: 90vh;
+                border: 15px solid black;
+                border-radius: 15px;
+            }
+            .display {
+                background-color: lightgray;
+                flex: 1;
+                font-size: 10em;
+                text-align: right;
+                padding: 15px;
+                overflow: scroll;
+                border-bottom: 15px solid black;
+            }
+            .keypad {
+                border-collapse: collapse;
+                flex: 5;
+                display: flex;
+                flex-wrap: wrap;
+                border-top: none;
+            }
+            .button {
+                flex-basis: calc(100%/4);
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border: 1px solid white;
+                transition: .3s;
+            }
+            .button:hover {
+                cursor: pointer;
+            }
+            .button-numeric {
+                background-color: #FE7F2D;
+                color: white;
+                font-size: 10em;
+            }
+            .button-numeric:hover {
+                background-color: #E77429;
+            }
+            .button-operator {
+                background-color: #233D4D;
+                color: white;
+                font-size: 10em;
+            }
+            .button-operator:hover, .equals-button:hover {
+                background-color: #1D3240;
+            }
+            .equals-button {
+                flex-basis: 50%;
+            }
+            .button-reset {
+                font-size: 7em;
+                flex-basis: 100%;
+                background-color: #FCCA46;
+                color: #233D4D;
+                border-bottom: 15px solid black;
+            }
+            .button-reset:hover {
+                background-color: #E6B840;
+            }
+            @media screen and (min-device-width:600px) { .button-reset, .button-numeric, .button-operator { font-size: 3em; } }
+            @media screen and (min-device-width:1200px) { .display { font-size: 5em; } }
+/*            @media screen and (min-device-width:1200px) { .display { font-size: 3em; } }*/
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="calculator">
+                <div class="display">0</div>
+                <div class="keypad">
+                    <div class="button-reset button">CLEAR</div>
+                    <div class="button-numeric button">7</div>
+                    <div class="button-numeric button">8</div>
+                    <div class="button-numeric button">9</div>
+                    <div class="button-operator button">/</div>
+                    <div class="button-numeric button">4</div>
+                    <div class="button-numeric button">5</div>
+                    <div class="button-numeric button">6</div>
+                    <div class="button-operator button">*</div>
+                    <div class="button-numeric button">1</div>
+                    <div class="button-numeric button">2</div>
+                    <div class="button-numeric button">3</div>
+                    <div class="button-operator button">-</div>
+                    <div class="button-numeric button">0</div>
+                    <div class="button-operator equals-button button">=</div>
+                    <div class="button-operator button">+</div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script>
+        // document element related features
+        const button = document.querySelectorAll('.button');
+        const display = document.querySelector('.display');
+        let displayContent = '';
+        
+        // add event listener to each key on the keypad
+        // the updateDisplay function will append the text
+        // value of each key to the calculator display
+        button.forEach((btn) => {
+            btn.addEventListener('click', updateDisplay);
+        });
+        
+        function updateDisplay(e) {
+            let buttonValue = e.srcElement.innerText;
+            let numAfterPoint;
+            if (buttonValue == 'CLEAR') {
+                display.textContent = '0';
+                displayContent = '';
+            } else if (buttonValue == '=') {
+                getAndCheckAns(displayContent);
+            } else {
+                displayContent+=buttonValue;
+                display.textContent = displayContent;
+            } // end of if statement
+        } // end of updateDisplay function
+        
+        // checks whether there are digits after the decimal and returns true if so
+        const isFloat = (num) => (num+'').indexOf('.') ? true : false;
+        
+        // this is self evident, go figure
+        const isInfinity = (num) => (num=='Infinity') ? true : false;
+        
+        // set display value to 0
+        const clearDisplayContent = () => displayContent = '0';
+        
+        // checks the ans is valid and calls the display function
+        function getAndCheckAns (statement) {
+            if (statement == '') {
+                window.alert('Please enter a statement to evaluate!');
+            } else {
+                let ans = eval(statement);
+                if (isInfinity(ans)) {
+                    window.alert('No need to crash spacetime today, dividing by 0 is off limits!');
+                    clearDisplayContent();
+                    display.textContent = '0';
+                    return;
+                } // end of isInfinity check
+                (isFloat(ans)) ? display.textContent = Math.round(ans*100) / 100 : display.textContent = ans;
+                clearDisplayContent();
+            } // end of if/else statement
+        } // end of getAndCheckAns function
+    </script>
+</html>
